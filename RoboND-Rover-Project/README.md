@@ -93,6 +93,7 @@ The decision does the following:
 1. If the navigation angles exist and the mode is forward:
 
 a. if the navigation angels are more than total count of navigable terrain pixels of 50, then it makes throttle 0.2 if the velocity is not the maximum velocity yet and changes the angle to be the mean of navigable angels after converting it to degrees and clipping it at [-15, 15].
+
 b. If the navigation angels are less than the total count of navigable terrain pixels of 50, then it stops.
 
 2. If the navigation angels exist and the mode is stop, then stop the Rover.
