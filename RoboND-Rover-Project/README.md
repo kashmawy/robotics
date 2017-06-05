@@ -97,3 +97,7 @@ b. If the navigation angels are less than the total count of navigable terrain p
 
 2. If the navigation angels exist and the mode is stop, then stop the Rover.
 3. If the navigation angels do not exist, then keep on moving forward by setting the throttle to 0.2.
+
+## Simulation
+
+[![Simulation](https://img.youtube.com/vi/g5MoM8oeu_c/0.jpg)](https://youtu.be/g5MoM8oeu_c)
