@@ -3,7 +3,7 @@
 # Search and Sample Return Project
 ![alt text][image_0] 
 
-This project is modeled after the [NASA sample return challenge](https://www.nasa.gov/directorates/spacetech/centennial_challenges/sample_return_robot/index.html) and it will give you first hand experience with the three essential elements of robotics, which are perception, decision making and actuation.  You will carry out this project in a simulator environment built with the Unity game engine.  
+This project is modeled after the [NASA sample return challenge](https://www.nasa.gov/directorates/spacetech/centennial_challenges/sample_return_robot/index.html). It has code for perception, decision making and actuation.  It will run in a simulator environment built with the Unity game engine.
 
 ## The Simulator
 The first step is to download the simulator build that's appropriate for your operating system.  Here are the links for [Linux](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Linux_Roversim.zip), [Mac](	https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Mac_Roversim.zip), or [Windows](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Windows_Roversim.zip).  
@@ -46,3 +46,54 @@ Then launch the simulator and choose "Autonomous Mode".  The rover should drive 
 **Note: running the simulator with different choices of resolution and graphics quality may produce different results!  Make a note of your simulator settings in your writeup when you submit the project.**
 
 
+## Code Structure
+
+The main executable is driver_rover.py, which includes a Rover state that includes all state of the rover:
+
+1. Image
+2. position
+3. Yaw, roll, pitch
+4. etc..
+
+The main loop calls perception using the Rover state, and expects a new Rover state, then calls decision using the Rover state and expects a new Rover state.
+The rover state from decision is used to send commands to the Rover
+
+The perception does the following:
+
+1. Creates a prespective transform matrix in order to be able to transform the image from the Rover into bird eye view. It uses the grid coordinates on the surface in order to do that.
+2. It then uses that prespective transform in order to transform the images from the Rover into that view.
+3. It then uses the RGB color threshold in order to get pixels for the following:
+
+a. The navigable surface, which is between RGB (160, 160, 160) and (255, 255, 255) since this is the whiter portion of the image.
+b. The rocksample surface, which is between RGB () and () since this is the yellower portion of the image.
+c. The obstacle surface, which is between RGB (0, 0, 0) and (160, 160, 160) since this is the darkest portion of the image.
+
+4. It then updates Rover vision_image with navigable surface, rocksample surface and obstacle surface.
+5. Afterwards it converts these to Rover-centric coordinates by doing:
+
+a. X pixels = - (Xposition - image height)
+b. Y pixels = - (Xposition - image width / 2)
+
+6. It then converts this to world-centric coordinates for navigable surface, rocksample surface and obstacle surface by doing:
+
+a. Rotate the x pixels and y pixels by yaw
+b. Translate the x pixels and y pixels by x position and y position after applying a scaling factor of 1/10
+c. Clip anything that goes outside of the boundary of the world size map
+
+7. It then update this in the world map if the roll is between [2, 358] or the pitch is between [2, 258]. Otherwise it ignores the measurement, since the error is high in order not to affect the accuracy.
+8. It then converts the navigable x position and y position into polar coordinates by:
+
+a. distance = square root(x pixels^2 + y pixels^2)
+b. angle = arc tan2(y pixels, x pixels)
+
+9. It then updates the Rover distance and angle
+
+The decision does the following:
+
+1. If the navigation angles exist and the mode is forward:
+
+a. if the navigation angels are more than total count of navigable terrain pixels of 50, then it makes throttle 0.2 if the velocity is not the maximum velocity yet and changes the angle to be the mean of navigable angels after converting it to degrees and clipping it at [-15, 15].
+b. If the navigation angels are less than the total count of navigable terrain pixels of 50, then it stops.
+
+2. If the navigation angels exist and the mode is stop, then stop the Rover.
+3. If the navigation angels do not exist, then keep on moving forward by setting the throttle to 0.2.

@@ -146,13 +146,13 @@ def perception_step(Rover):
     rocksample_world_x, rocksample_world_y = pix_to_world(rocksample_x, rocksample_y, Rover.pos[0], Rover.pos[1], Rover.yaw, Rover.worldmap.shape[0], scale)
     navigable_world_x, navigable_world_y = pix_to_world(navigable_x, navigable_y, Rover.pos[0], Rover.pos[1], Rover.yaw, Rover.worldmap.shape[0], scale)
 
-
-    Rover.worldmap[obstacle_world_y, obstacle_world_x, 0] += 1
-    Rover.worldmap[rocksample_world_y, rocksample_world_x, 1] += 1
-    Rover.worldmap[navigable_world_y, navigable_world_x, 2] += 1
+    if (Rover.roll < 2 or Rover.roll > 358) and (Rover.pitch < 2 or Rover.pitch > 358):
+        Rover.worldmap[obstacle_world_y, obstacle_world_x, 0] += 1
+        Rover.worldmap[rocksample_world_y, rocksample_world_x, 1] += 1
+        Rover.worldmap[navigable_world_y, navigable_world_x, 2] += 1
 
     # To polar coordinates and update dist and angeles
-    dist, angeles = to_polar_coords(obstacle_x, obstacle_y)
+    dist, angeles = to_polar_coords(navigable_x, navigable_y)
 
     Rover.nav_dists = dist
     Rover.nav_angles = angeles
