@@ -102,3 +102,17 @@ b. If the navigation angels are less than the total count of navigable terrain p
 ## Simulation
 
 [![Simulation](https://img.youtube.com/vi/g5MoM8oeu_c/0.jpg)](https://youtu.be/g5MoM8oeu_c)
+
+### Notebook
+
+The notebook can be found at [here](code/Rover_Project_Test_Notebook.ipynb)
+
+The notebook process_image does the same as the perception described above, and then in the end it puts three images together to form one image:
+
+1. Upper left is what the rover sees.
+2. Upper right is the bird eye video (after the prespective transform) and the color threshold to find only the navigable area.
+3. The lower left is the actual mapped overlayed with the map that is being discovered as the simulation runs.
+
+### Notebook video
+
+[![Notebook video](https://img.youtube.com/vi/ESuS7lWQ65M/0.jpg)](https://youtu.be/ESuS7lWQ65M)
